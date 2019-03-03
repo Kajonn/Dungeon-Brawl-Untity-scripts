@@ -5,8 +5,7 @@ using dungeonbrawl.Common;
 
 namespace dungeonbrawl
 {
-
-    [RequireComponent(typeof(EntityStats))]
+    
     public class Equipment : MonoBehaviour
     {
 

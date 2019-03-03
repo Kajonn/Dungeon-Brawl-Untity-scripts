@@ -82,6 +82,25 @@ namespace dungeonbrawl
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
+            Collision(collision);
+        }
+
+        private void OnTriggerStay2D(Collider2D collision)
+        {
+            CollisionStay(collision);
+        }
+
+        private void OnCollisionEnter2D(Collision2D collision)
+        {
+            Collision(collision.collider);
+        }
+
+        private void OnCollisionStay2D(Collision2D collision)
+        {
+            CollisionStay(collision.collider);
+        }
+
+        private void Collision(Collider2D collision) {
             if (collision.tag.Equals(targetTag))
             {
                 hitSpriteRenderer.Add(collision.GetComponent<SpriteRenderer>());
@@ -92,20 +111,27 @@ namespace dungeonbrawl
                     hitParticleSystem.GetComponent<ParticleSystem>().Play();
                 }
 
-                if (callback != null) {
+                if (callback != null)
+                {
                     callback.Hit(collision.gameObject, objectPool);
                 }
 
-                if (range > 0) {
+                if (range > 0)
+                {
+                    gameObject.SetActive(false);
                     StartDestroy();
                 }
 
 
                 hit = true;
-            } 
+            }
+            else if (collision.tag.Equals("Wall"))
+            {
+                Deactivate();
+            }
         }
 
-        private void OnTriggerStay2D(Collider2D collision)
+        private void CollisionStay(Collider2D collision)
         {
             if (lastingDamage && collision.tag.Equals(targetTag))
             {

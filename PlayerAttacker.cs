@@ -5,41 +5,43 @@ using dungeonbrawl.Common;
 
 namespace dungeonbrawl
 {
+    [RequireComponent(typeof(ObjectDetector))]
     public class PlayerAttacker : MonoBehaviour
     {
 
         private bool inRange;
-
-        private GameObject player;
+        
         private bool atPlayer = false;
         private WeaponAttacker weaponAttacker;
         private TargetAttacker targetAttacker;
         private UnarmedAttacker unarmedAttacker;
         private EquipmentHolder equipmentHolder;
+        private ObjectDetector objectDetector;
 
         public bool InRange { get => inRange; }
-
+        
         private void Start()
         {
             weaponAttacker = GetComponent<WeaponAttacker>();
             targetAttacker = GetComponent<TargetAttacker>();
             unarmedAttacker = GetComponent<UnarmedAttacker>();
             equipmentHolder = GetComponent<EquipmentHolder>();
+            objectDetector = GetComponent<ObjectDetector>();
         }
 
         private void Update()
         {
-            if (player == null)
+            if (objectDetector.TargetObject == null)
             {
-                player = GameObject.FindWithTag("Player");
+                objectDetector.TargetObject = GameObject.FindWithTag("Player");
             }
-            else {
-                TryAttack(player);
+            else if(objectDetector.ObjectDetected) {
+                TryAttack(objectDetector.TargetObject);
             }
 
         }
 
-        private void TryAttack(GameObject player)
+        public void TryAttack(GameObject player)
         {
 
             float distance = (player.transform.position - transform.position).magnitude;
@@ -83,7 +85,7 @@ namespace dungeonbrawl
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            if (collision.gameObject == player)
+            if (collision.gameObject == objectDetector.TargetObject)
             {
                 atPlayer = true;
             }
@@ -91,7 +93,7 @@ namespace dungeonbrawl
 
         private void OnCollisionExit2D(Collision2D collision)
         {
-            if (collision.gameObject == player)
+            if (collision.gameObject == objectDetector.TargetObject)
             {
                 atPlayer = false;
             }
